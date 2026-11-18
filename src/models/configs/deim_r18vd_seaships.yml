@@ -1,0 +1,12 @@
+# DEIM-R18 (DEIM code on the RT-DETRv2-S model) on SeaShips: DEIM's official 120-epoch COCO
+# config with the changes listed in src/models/rtdetr_official.py. Image folder, annotation files,
+# workers, epochs and batch are set per run with -u. DEIM's code is patched by src/models/patch_deim.py.
+__include__: ['../../../third_party/DEIM-main/configs/deim_rtdetrv2/deim_r18vd_120e_coco.yml']
+
+num_classes: 6
+remap_mscoco_category: False
+
+PResNet:
+  pretrained: False
+
+checkpoint_freq: 1000

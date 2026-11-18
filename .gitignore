@@ -1,0 +1,14 @@
+# Datasets, outputs, third-party code and checkpoints are not tracked (README.md, weights/README.md).
+/data/
+/runs/
+/third_party/
+/weights/*
+!/weights/README.md
+*.pt
+*.pth
+
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.vscode/
+.idea/

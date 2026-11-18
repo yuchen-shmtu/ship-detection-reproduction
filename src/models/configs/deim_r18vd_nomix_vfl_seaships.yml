@@ -1,0 +1,10 @@
+# deim-r18-nomix with RT-DETRv2's VFL classification loss in place of DEIM's MAL: tests whether
+# MAL costs the cross-dataset transfer that RT-DETRv2-S keeps. VFL settings as DEIM's own
+# RT-DETRv2 base config (configs/base/rtdetrv2_r50vd.yml: alpha 0.75, gamma 2.0).
+__include__: ['./deim_r18vd_nomix_seaships.yml']
+
+DEIMCriterion:
+  weight_dict: {loss_vfl: 1, loss_bbox: 5, loss_giou: 2}
+  losses: ['vfl', 'boxes']
+  alpha: 0.75
+  gamma: 2.0

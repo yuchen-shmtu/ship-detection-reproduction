@@ -1,0 +1,17 @@
+# deim-r18-nomix with the MPDIoU box loss (src/models/boat_detr_modules.py, DEIMCriterionMPD) in place
+# of GIoU; the rest of the criterion is DEIMCriterion's merged R18 settings.
+__include__: ['./deim_r18vd_nomix_seaships.yml']
+
+criterion: DEIMCriterionMPD
+
+DEIMCriterionMPD:
+  weight_dict: {loss_vfl: 1, loss_bbox: 5, loss_giou: 2, loss_mal: 1}
+  losses: ['mal', 'boxes']
+  alpha: 0.75
+  gamma: 1.5
+  use_uni_set: False
+  matcher:
+    type: HungarianMatcher
+    weight_dict: {cost_class: 2, cost_bbox: 5, cost_giou: 2}
+    alpha: 0.25
+    gamma: 2.0

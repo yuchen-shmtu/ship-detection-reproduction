@@ -1,0 +1,42 @@
+# Settings of the method and of the evaluation, read by scripts/train.sh and scripts/evaluate.sh and passed to the
+# code in src/ as command-line options. The detector recipes are src/models/configs/*.yml (DEIM and RT-DETR
+# configs, each including the official COCO config from third_party/) and the fixed recipes in
+# src/models/train_detector.py (ultralytics) and src/models/tv_detector.py (torchvision).
+# Outputs always go to runs/seaships/<model>_<protocol>_s<seed>/ (detectors, whatever the dataset) and runs/types/
+# (ship-type classifiers).
+
+seeds: [0, 1, 2]        # training seeds of every model
+workers: 4              # data-loader workers per training (each one costs host memory, see README.md)
+
+protocols:              # --protocol of the code: dataset, the unit kept in one subset, test splits
+  session:  {dataset: seaships, recording: capture session, test: [session_test, cross_test]}
+  random:   {dataset: seaships, recording: none (frames at random; leak study only), test: [random_test, cross_test]}
+  smdplus:  {dataset: smdplus, recording: video, test: [smdplus_test]}
+  aboships: {dataset: aboships, recording: video (whole days per subset), test: [aboships_test]}
+  mcships:  {dataset: mcships, recording: none (web photos; official split), test: [mcships_test, mcships_testdedup]}
+  wsodd:    {dataset: wsodd, recording: capture session, test: [wsodd_test]}
+
+method:
+  base_detector: deim-r18-nomix   # DEIM-R18 without Mosaic and MixUp (src/models/configs/deim_r18vd_nomix_seaships.yml)
+  wise_ft:                        # Module A: alpha * fine-tuned + (1 - alpha) * COCO weights; class heads stay fine-tuned
+    alpha: 0.9                    # the smallest of 1.0 / 0.9 / 0.8 within 1.0 of alpha 1's SeaShips val mAP50-95
+  type_stage:                     # Module B
+    arm: convnext-t-ft            # temperature-scaled ConvNeXt-T on box crops with 12.5% context per side
+    top: 100                      # boxes per image re-typed, by detector score
+    w: 0.5                        # fusion weight (a 0.1 grid value), the same for every dataset and seed
+  slicing:                        # full frame + grid x grid tiles, each frac of the frame, merged at IoU 0.5
+    grid: 2
+    frac: 0.6
+    protocols: [smdplus]          # where it raised mean class-agnostic val AP50 by >= 1.0 over the three seeds
+
+baselines:                        # src/models/train_detector.py --model names (ultralytics: the .pt file in weights/)
+  all: [deim-r18, rtdetrv2-s, rtdetr-r18, yolo26n.pt, yolo11n.pt, yolov8n.pt, faster-rcnn-r50]
+  seaships: [rtdetr-l.pt, yolov10n.pt, yolo12n.pt, yolov5nu.pt, ssd300-vgg16]   # SeaShips protocols only
+
+evaluation:
+  zero_shot:                      # SeaShips-trained runs only: class-agnostic AP on SMD and ABOships, ignore regions kept
+    smd_imgsz: [640]
+    aboships_imgsz: [640]
+  bootstrap:                      # two-level: test recordings and training seeds (src/evaluation/boot_cache.py)
+    n: 1000
+    seed: 0

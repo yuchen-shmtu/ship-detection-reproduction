@@ -1,0 +1,12 @@
+# DEIM-R18 without its Dense O2O data (Mosaic and MixUp), to test whether they cost the
+# cross-dataset transfer (src/models/rtdetr_official.py, variant deim-r18-nomix).
+# Everything else is deim_r18vd_seaships.yml: MAL loss, flat-cosine lr, SiLU decoder, and the
+# photometric / zoom-out / IoU-crop augmentation in epochs 4-116.
+__include__: ['./deim_r18vd_seaships.yml']
+
+train_dataloader:
+  dataset:
+    transforms:
+      mosaic_prob: -0.1  # DEIM's own "off" value
+  collate_fn:
+    mixup_prob: 0.0

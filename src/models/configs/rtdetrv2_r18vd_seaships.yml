@@ -1,0 +1,12 @@
+# RT-DETRv2-S (official rtdetrv2_pytorch code, R18 backbone, 3 decoder layers) on SeaShips: the
+# official 120-epoch COCO config with the changes listed in src/models/rtdetr_official.py. Image
+# folder, annotation files, workers, epochs and batch are set per run with -u.
+__include__: ['../../../third_party/RT-DETR-main/rtdetrv2_pytorch/configs/rtdetrv2/rtdetrv2_r18vd_120e_coco.yml']
+
+num_classes: 6
+remap_mscoco_category: False
+
+PResNet:
+  pretrained: False
+
+checkpoint_freq: 1000

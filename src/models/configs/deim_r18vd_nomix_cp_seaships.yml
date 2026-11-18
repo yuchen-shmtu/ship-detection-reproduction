@@ -1,0 +1,25 @@
+# deim-r18-nomix plus box-level copy-paste of small objects (SmallCopyPaste, src/models/boat_detr_modules.py), 2026-10-22.
+# With our two modules on every base, DEIM-R18 with Mosaic led our base on SMD-Plus, whose ships are mostly tiny,
+# while Mosaic costs transfer; copy-paste adds small ships to a frame without down-scaling the frame as Mosaic does.
+# Everything else is deim_r18vd_nomix_seaships.yml (Mosaic op kept in the list but off, MixUp off); the paste runs in
+# the epochs of the other strong augmentations (policy ops, epochs 4-116).
+__include__: ['./deim_r18vd_nomix_seaships.yml']
+
+train_dataloader:
+  dataset:
+    transforms:
+      ops:
+        - {type: Mosaic, output_size: 320, rotation_range: 10, translation_range: [0.1, 0.1], scaling_range: [0.5, 1.5],
+           probability: 1.0, fill_value: 0, use_cache: False, max_cached_images: 50, random_pop: True}
+        - {type: SmallCopyPaste, probability: 0.5, n_max: 6, max_area: 0.01, scale: [0.8, 1.25], sources: 2, feather: 2}
+        - {type: RandomPhotometricDistort, p: 0.5}
+        - {type: RandomZoomOut, fill: 0}
+        - {type: RandomIoUCrop, p: 0.8}
+        - {type: SanitizeBoundingBoxes, min_size: 1}
+        - {type: RandomHorizontalFlip}
+        - {type: Resize, size: [640, 640], }
+        - {type: SanitizeBoundingBoxes, min_size: 1}
+        - {type: ConvertPILImage, dtype: 'float32', scale: True}
+        - {type: ConvertBoxes, fmt: 'cxcywh', normalize: True}
+      policy:
+        ops: ['Mosaic', 'SmallCopyPaste', 'RandomPhotometricDistort', 'RandomZoomOut', 'RandomIoUCrop']

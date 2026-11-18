@@ -1,0 +1,12 @@
+# RT-DETR-R18 (official rtdetrv2_pytorch code, v1 model) on SeaShips: the official R18 6x COCO
+# config with the changes listed in src/models/rtdetr_official.py. Image folder, annotation files,
+# workers, epochs and batch are set per run by rtdetr_official.train with -u.
+__include__: ['../../../third_party/RT-DETR-main/rtdetrv2_pytorch/configs/rtdetr/rtdetr_r18vd_6x_coco.yml']
+
+num_classes: 6
+remap_mscoco_category: False
+
+PResNet:
+  pretrained: False
+
+checkpoint_freq: 1000

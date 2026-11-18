@@ -1,0 +1,20 @@
+# deim-r18-nomix with the backbone at 0.1x the lr (2e-5 against 2e-4), as RT-DETR v1 / v2
+# fine-tune theirs (1e-5 against 1e-4): tests whether DEIM's full-lr backbone costs the
+# cross-dataset transfer that RT-DETRv2-S keeps. The groups must be disjoint (DEIM asserts it);
+# parameters in none go to the default group (lr 2e-4, wd 1e-4). Norm weights keep wd 0, as in
+# DEIM's own config.
+__include__: ['./deim_r18vd_nomix_seaships.yml']
+
+optimizer:
+  type: AdamW
+  params:
+    - params: '^(?=.*backbone)(?=.*(?:norm|bn)).*$'
+      lr: 0.00002
+      weight_decay: 0.
+    - params: '^(?=.*backbone)(?!.*(?:norm|bn)).*$'
+      lr: 0.00002
+    - params: '^(?=.*(?:encoder|decoder))(?=.*(?:norm|bn)).*$'
+      weight_decay: 0.
+  lr: 0.0002
+  betas: [0.9, 0.999]
+  weight_decay: 0.0001

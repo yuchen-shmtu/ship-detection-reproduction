@@ -1,0 +1,25 @@
+# deim-r18-nomix plus fine-detail injection (src/models/boat_detr_modules.py, HybridEncoderFDI):
+# PResNet also returns its stride-4 stage, which the encoder adds to its stride-8 input.
+__include__: ['./deim_r18vd_nomix_seaships.yml']
+
+DEIM:
+  encoder: HybridEncoderFDI
+
+PResNet:
+  return_idx: [0, 1, 2, 3]
+
+HybridEncoderFDI:  # HybridEncoder's merged R18 settings, plus c2_channels
+  c2_channels: 64
+  in_channels: [128, 256, 512]
+  feat_strides: [8, 16, 32]
+  hidden_dim: 256
+  use_encoder_idx: [2]
+  num_encoder_layers: 1
+  nhead: 8
+  dim_feedforward: 1024
+  dropout: 0.
+  enc_act: 'gelu'
+  expansion: 0.5
+  depth_mult: 1
+  act: 'silu'
+  version: rt_detrv2

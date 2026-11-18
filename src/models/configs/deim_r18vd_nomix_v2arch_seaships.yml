@@ -1,0 +1,11 @@
+# DEIM's training recipe without Mosaic / MixUp (deim-r18-nomix: MAL loss, flat-cosine lr 2e-4,
+# full-lr backbone) on RT-DETRv2-S's own architecture and COCO weights: the decoder keeps
+# RT-DETRv2's defaults (query_pos_method default, ReLU) instead of DEIM's as_reg + SiLU, so
+# every RT-DETRv2-S tensor loads. Tests whether DEIM's recipe or DEIM's COCO checkpoint costs
+# the transfer that RT-DETRv2-S keeps (variant deim-r18-nomix-v2init).
+__include__: ['./deim_r18vd_nomix_seaships.yml']
+
+RTDETRTransformerv2:
+  query_pos_method: default
+  activation: relu
+  mlp_act: relu
