@@ -47,76 +47,63 @@ recordings and training seeds.
         └── README.md                 # where every checkpoint comes from (checkpoints are not tracked)
 
   -----------------------------------------------------------------------
-  Folder                              Contents
-  ----------------------------------- -----------------------------------
-  `src/data/`                         `ship_data.py` (dataset registry
-                                      and ground-truth helpers).
-                                      SeaShips: `extract_seaships.py`,
-                                      `build_seaships_pool.py`,
-                                      `seaships_osd.py` (camera and time
-                                      read from the on-screen display,
-                                      with `osd_*_templates.npz`),
-                                      `build_seaships_splits.py` (capture
-                                      sessions and the session split),
-                                      `audit_seaships_split.py` (leak
-                                      audit of a split),
-                                      `build_seaships_coco.py`. SMD,
-                                      zero-shot: `fetch_smd.py`,
-                                      `build_smd.py`. `build_smdplus.py`.
-                                      ABOships: `fetch_aboships.py`,
-                                      `build_aboships.py`,
-                                      `build_aboships_splits.py`.
-                                      `build_mcships.py`.
-                                      `build_wsodd.py`. Crops for Module
-                                      B: `build_crops.py`,
-                                      `build_crops_multi.py`,
-                                      `mine_det_crops.py`.
-                                      `split_manifest.py` writes and
-                                      checks
-                                      `splits/record_level_split.json`.
+  ## Folder Contents
 
-  `src/models/`                       `configs/*_seaships.yml` (the
-                                      detector recipes: the official DEIM
-                                      / RT-DETR configs plus our
-                                      changes), `train_detector.py`
-                                      (trains any detector),
-                                      `rtdetr_official.py` (RT-DETR-R18,
-                                      RT-DETRv2-S, DEIM-R18 and the base
-                                      detector on their official code),
-                                      `boat_detr_modules.py` (modules
-                                      registered into DEIM: small-object
-                                      copy-paste, and two variants that
-                                      were dropped), `tv_detector.py`
-                                      (Faster R-CNN, SSD300),
-                                      `patch_deim.py`,
-                                      `fetch_weights.py`, `run_suite.py`
-                                      (a queue of train-and-test jobs),
-                                      `wise_ft.py` (Module A),
-                                      `type_classifier.py` and
-                                      `type_rescore.py` (Module B:
-                                      classifier, fusion),
-                                      `type_variants.py` (variants of
-                                      Module B), `slice_eval.py` (sliced
-                                      inference).
+### `src/data/`
 
-  `src/evaluation/`                   `det_eval.py` (COCO AP in NumPy
-                                      with ignore regions; matches
-                                      pycocotools), `eval_detector.py`
-                                      (tests a run in-domain and
-                                      zero-shot), `compare_runs.py`
-                                      (paired bootstrap over images or
-                                      recordings), `boot_cache.py`
-                                      (two-level bootstrap over
-                                      recordings and seeds),
-                                      `tabulate_runs.py` (`results.csv`,
-                                      `results_mean.csv`),
-                                      `type_confusion.py`,
-                                      `type_headroom.py`,
-                                      `type_threshold.py` (analyses of
-                                      Module B), `model_cost.py`,
-                                      `e2e_speed.py` (cost and end-to-end
-                                      latency), `verify_env.py` (checks
-                                      that GPU kernels really run).
+- `ship_data.py`: Dataset registry and ground-truth helpers.
+- **SeaShips:**
+  - `extract_seaships.py`
+  - `build_seaships_pool.py`
+  - `seaships_osd.py`: Camera and time extraction from the on-screen display, using `osd_*_templates.npz`.
+  - `build_seaships_splits.py`: Capture sessions and session-level splitting.
+  - `audit_seaships_split.py`: Leakage audit of a split.
+- **SMD and zero-shot:**
+  - `fetch_smd.py`
+  - `build_smd.py`
+  - `build_smdplus_pool.py`
+- **ABOships:**
+  - `fetch_aboships.py`
+  - `build_aboships.py`
+  - `build_aboships_splits.py`
+- `build_mcships.py`
+- `build_wsodd.py`
+- **Crops for Module B:**
+  - `build_crops.py`
+  - `build_crops_multi.py`
+  - `mine_det_crops.py`
+- `split_manifest.py`: Writes and checks `splits/record_level_split.json`.
+
+### `src/models/`
+
+- `configs/*_seaships.yml`: Detector recipes based on official DEIM / RT-DETR configurations, including our changes.
+- `train_detector.py`: Trains any detector.
+- `rtdetr_official.py`: RT-DETR-R18, RT-DETRv2-S, DEIM-R18, and the base detector using their official implementations.
+- `boat_detr_modules.py`: Modules registered into DEIM, including small-object copy-paste and two variants that were dropped.
+- `tv_detector.py`: Faster R-CNN and SSD300.
+- `patch_deim.py`
+- `fetch_weights.py`
+- `run_suite.py`: Queue of training and testing jobs.
+- `wise_ft.py`: Module A.
+- `type_classifier.py`
+- `type_rescore.py`: Module B classifier and fusion.
+- `type_variants.py`: Variants of Module B.
+- `slice_eval.py`: Sliced inference.
+
+### `src/evaluation/`
+
+- `det_eval.py`: COCO AP in NumPy with ignore regions; matches pycocotools.
+- `eval_detector.py`: Tests a run in-domain and zero-shot.
+- `compare_runs.py`: Paired bootstrap over images or recordings.
+- `boot_cache.py`: Two-level bootstrap over recordings and seeds.
+- `tabulate_runs.py`: Generates `results.csv` and `results_mean.csv`.
+- `type_confusion.py`
+- `type_headroom.py`
+- `type_threshold.py`: Analyses of Module B.
+- `model_cost.py`
+- `e2e_speed.py`: Model cost and end-to-end latency.
+- `verify_env.py`: Checks that GPU kernels really run.
+  
   -----------------------------------------------------------------------
 
 Each script's docstring states what it reads and writes. Run everything
