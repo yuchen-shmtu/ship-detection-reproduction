@@ -44,15 +44,28 @@ Public files from their authors. The sha256 column is that of the copies the exp
 
 ## 2. Trained checkpoints of the paper
 
-Our method on each dataset and seed needs two files: the detector after Module A and the classifier of Module B.
-The base detectors (before Module A) are only needed to redo Module A or the ablation rows; like the
-Module A files, they hold only the EMA weights the code reads. All of them (4.1 GB) are in a separate
-archive, `ship-detection-weights_20261118.zip`, not in git: unzip it at the repository root, which puts every file
-at the path listed below, and check them with `sha256sum -c runs/SHA256SUMS`.
+Our method on each dataset and seed needs two files: the detector after Module A and the classifier of Module B. The base detectors (before Module A) are only needed to redo Module A or the ablation rows; like the Module A files, they hold only the EMA weights the code reads.
 
-Download: *to be added when the archive is published.*
+All trained checkpoints (approximately 4.1 GB extracted) are distributed separately from the Git repository through the GitHub Release.
 
-**Detector after Module A (our method's detector)**
+**Download:** [v1.0.0 — Ship Detection Model Weights](https://github.com/yuchen-shmtu/ship-detection-reproduction/releases/tag/v1.0.0)
+
+Download all three parts of the split 7-Zip archive from the Assets section:
+
+- `ship-detection-weights_20261118_2.7z.001`
+- `ship-detection-weights_20261118_2.7z.002`
+- `ship-detection-weights_20261118_2.7z.003`
+
+Keep all three files in the same directory. Open the `.001` file with 7-Zip to extract the complete archive. Do not rename the files or extract individual parts separately.
+
+Extract the archive into the repository root, preserving the directory structure, especially the `runs/` directory.
+
+After extraction, verify the checkpoints using the SHA256 checksums listed below. On Linux or Git Bash, run:
+
+```bash
+sha256sum -c runs/SHA256SUMS
+```
+On Windows PowerShell, use `Get-FileHash` to verify individual checkpoint files against the SHA256 values listed in this document.
 
 | File | MB | sha256 |
 |---|---|---|
