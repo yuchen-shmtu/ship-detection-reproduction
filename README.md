@@ -55,13 +55,14 @@ recordings and training seeds.
 - **SeaShips:**
   - `extract_seaships.py`
   - `build_seaships_pool.py`
+  - `build_seaships_coco.py`
   - `seaships_osd.py`: Camera and time extraction from the on-screen display, using `osd_*_templates.npz`.
   - `build_seaships_splits.py`: Capture sessions and session-level splitting.
   - `audit_seaships_split.py`: Leakage audit of a split.
 - **SMD and zero-shot:**
   - `fetch_smd.py`
   - `build_smd.py`
-  - `build_smdplus_pool.py`
+  - `build_smdplus.py`
 - **ABOships:**
   - `fetch_aboships.py`
   - `build_aboships.py`
