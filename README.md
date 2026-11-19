@@ -213,45 +213,50 @@ evaluation.
 
 ## Data
 
-Images and annotations are not redistributed; get each dataset from its
-authors and build it with `src/data/`:
+### Data Availability and Dataset Sources
 
-  -------------------------------------------------------------------------------------------------------------------------------
-  Dataset                 Get it                                                                    Build (in this order)
-  ----------------------- ------------------------------------------------------------------------- -----------------------------
-  SeaShips, public        Kaggle `nam97595/seaships7k` (a Roboflow export) as                       `extract_seaships.py`,
-  7,000-image subset      `data/_raw/seaships7k.zip`                                                `build_seaships_pool.py`,
-                                                                                                    `seaships_osd.py`,
-                                                                                                    `build_seaships_splits.py`,
-                                                                                                    `build_seaships_coco.py`
+The original image datasets used in this study are obtained from their respective publicly accessible sources. The image data are not redistributed in this repository. The following table provides the original dataset sources and access information.
 
-  Singapore Maritime      `python src/data/fetch_smd.py` (the annotated VIS videos only, from       `build_smd.py`
-  Dataset (zero-shot      Kaggle `mmichelli/singapore-maritime-dataset`)                            
-  test)                                                                                             
+#### Dataset Sources
 
-  SMD-Plus                Google Drive file `1yokFvx_cJu-Fl5ti1wgF1WPHao_2kcKE`                     `build_smdplus.py`
-                          ([kjunhwa/SMD-Plus](https://github.com/kjunhwa/SMD-Plus)); unpack its     
-                          `VIS_Onshore.zip` and `VIS_Onboard.zip` into `data/smdplus_raw/`          
+| Dataset | Original source and access link | Preparation script |
+|---|---|---|
+| SeaShips (7K) | [Kaggle – SeaShips7K](https://www.kaggle.com/datasets/nam97595/seaships7k) | `extract_seaships.py`, `build_seaships_pool.py`, `seaships_osd.py`, `build_seaships_splits.py`, `build_seaships_coco.py` |
+| Singapore Maritime Dataset (SMD) | [Kaggle – Singapore Maritime Dataset](https://www.kaggle.com/datasets/mmichelli/singapore-maritime-dataset); [Original dataset website](https://sites.google.com/site/dilipprasad/home/singapore-maritime-dataset) | `fetch_smd.py`, `build_smd.py` |
+| SMD-Plus | [Official GitHub repository](https://github.com/kjunhwa/SMD-Plus); [Google Drive download](https://drive.google.com/file/d/1yokFvx_cJu-Fl5ti1wgF1WPHao_2kcKE/view) | `build_smdplus.py` |
+| ABOships | [Zenodo dataset record](https://doi.org/10.5281/zenodo.4736931) | `fetch_aboships.py`, `build_aboships.py`, `build_aboships_splits.py` |
+| McShips (lite) | [Original GitHub repository](https://github.com/ZhengYitong2333/Mcships), which provides access instructions for the dataset | `build_mcships.py` |
+| WSODD | [Original GitHub repository](https://github.com/sunjiaen/WSODD); [Baidu Netdisk download](https://pan.baidu.com/s/1-xT6fwH3alW78uCsm9VjRA), access code: `1234` | `build_wsodd.py` |
 
-  ABOships                `python src/data/fetch_aboships.py` (Zenodo record 4736931, the labelled  `build_aboships.py`,
-                          frames only)                                                              `build_aboships_splits.py`
+#### Dataset Preparation and Reproducibility
 
-  McShips (lite)          Google Drive file `1udewXbHCS9WKM-MPpWqouUUGs6Vx5iWf`                     `build_mcships.py`
-                          ([ZhengYitong2333/Mcships](https://github.com/ZhengYitong2333/Mcships))   
-                          as `data/_raw/Mcship_database_lite.zip`                                   
+All dataset preparation scripts are provided under `src/data/`. These scripts handle dataset extraction, annotation processing, image preparation, recording/session identification, and dataset splitting.
 
-  WSODD                   the Baidu share of [sunjiaen/WSODD](https://github.com/sunjiaen/WSODD)    `build_wsodd.py`
-                          (`https://pan.baidu.com/s/1-xT6fwH3alW78uCsm9VjRA`, code 1234); unpack    
-                          `WSODD USV_dataset.zip` into `data/wsodd_raw/`                            
-  -------------------------------------------------------------------------------------------------------------------------------
+After obtaining the original datasets, follow the preparation procedures described in this README and run the scripts from the repository root.
 
-Then cut the crops of Module B and check the splits:
+The recording-level split manifests are provided in `splits/record_level_split.json`. They specify the training, validation, and test assignments used in the experiments and can be checked using:
 
-``` bash
-python src/data/build_crops.py
-python src/data/build_crops_multi.py
+```bash
 python src/data/split_manifest.py check
 ```
+
+The processed image datasets are not included in this repository because they are obtained from their respective original sources. Users should download the datasets independently and comply with the access conditions and usage terms specified by the original providers.
+
+#### Source Code and Experimental Materials
+
+The complete source code, experimental configurations, dataset split manifests, and evaluation scripts are publicly available at:
+
+https://github.com/yuchen-shmtu/ship-detection-reproduction
+
+A permanent archived version of the software and associated research materials is available through Zenodo:
+
+https://doi.org/10.5281/zenodo.24369106
+
+The trained detector checkpoints and ship-type classification models are distributed separately through the GitHub Release:
+
+https://github.com/yuchen-shmtu/ship-detection-reproduction/releases/tag/v1.0.0
+
+The release includes the trained model weights required to reproduce the reported experiments. Please refer to `weights/README.md` for checkpoint descriptions, file locations, and SHA-256 verification information.
 
 ### Recording-level splits
 
@@ -261,38 +266,23 @@ split by image), plus the class names in label order.
 `split_manifest.py check` compares a rebuilt `data/` with it. Image
 counts, with recordings in brackets:
 
-  --------------------------------------------------------------------------
-  Protocol     Dataset      Recording   Train       Val         Test
-  ------------ ------------ ----------- ----------- ----------- ------------
-  `session`    SeaShips     capture     4,846 (110) 711 (12)    1,422 (34)
-                            session                             
 
-  `random`     SeaShips     none        4,886       698         1,395;
-                            (frames at                          cross_test
-                            random)                             284
+### Recording-level splits
 
-  `smdplus`    SMD-Plus     video       2,779 (32)  385 (5)     1,385 (14)
+`splits/record_level_split.json` lists, for each protocol, every recording with its subset and image IDs (McShips and the SeaShips random split by image), plus the class names in label order. `split_manifest.py check` compares a rebuilt `data/` with it. Image counts, with recording counts in brackets:
 
-  `aboships`   ABOships     video       6,389 (9    1,299 (2    1,353 (2
-                            (whole days days, 126   days, 36    days, 40
-                            per subset) videos)     videos)     videos)
+| Protocol | Dataset | Recording | Train | Val | Test |
+|---|---|---|---:|---:|---:|
+| `session` | SeaShips | capture session | 4,846 (110) | 711 (12) | 1,422 (34) |
+| `random` | SeaShips | none (frames at random) | 4,886 | 698 | 1,395 |
+| `smdplus` | SMD-Plus | video | 2,779 (32) | 385 (5) | 1,385 (14) |
+| `aboships` | ABOships | video (whole days per subset) | 6,389 (9 whole days, 126 videos) | 1,299 (2 days, 36 videos) | 1,353 (2 days, 40 videos) |
+| `mcships` | McShips (lite) | none (web photos, official split) | 4,048 | 1,637 | 2,311 (test_dedup: 2,195) |
+| `wsodd` | WSODD | capture session | 5,227 (23) | 747 (11) | 1,493 (9) |
+| `smd` | SMD | video (zero-shot test) | — | — | 4,002 (40) |
 
-  `mcships`    McShips      none (web   4,048       1,637       2,311;
-               (lite)       photos,                             test_dedup
-                            official                            2,195
-                            split)                              
+The SeaShips random split is kept only to measure its leak: `cross_test` (random test ∩ session test) holds the test images neither protocol trained on.
 
-  `wsodd`      WSODD        capture     5,227 (23)  747 (11)    1,493 (9)
-                            session                             
-
-  `smd`        SMD          video       ---         ---         4,002 (40)
-               (zero-shot                                       
-               test)                                            
-  --------------------------------------------------------------------------
-
-The SeaShips random split is kept only to measure its leak: `cross_test`
-(random test ∩ session test) holds the test images neither protocol
-trained on.
 
 ## Train
 
